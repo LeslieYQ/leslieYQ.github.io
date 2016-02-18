@@ -1,0 +1,680 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="html5 mobile upload image canvas web前端," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="这是最近给公司写一个项目，项目要求大概是这样子：1.上传手机本地图片，然后裁剪（后加的需求）2.能够旋转图片，用于裁剪（后面加的需求）3.填写各种文字，选择颜色，之后把文字和2个相关的图片，水印到裁剪的图片上，上传服务器生成一个图片地址，返回，分享出去。
+功能就是大概上面这些，其他的也就是各种小功能，不提了，技术选型说下，整体上使用 Vue（包括 router，resource，webpack等等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="html5 上传本地图片处理各种问题">
+<meta property="og:url" content="http://leslieyq.github.io/2015/12/16/html5-上传本地图片处理各种问题/index.html">
+<meta property="og:site_name" content="LeslieYQ">
+<meta property="og:description" content="这是最近给公司写一个项目，项目要求大概是这样子：1.上传手机本地图片，然后裁剪（后加的需求）2.能够旋转图片，用于裁剪（后面加的需求）3.填写各种文字，选择颜色，之后把文字和2个相关的图片，水印到裁剪的图片上，上传服务器生成一个图片地址，返回，分享出去。
+功能就是大概上面这些，其他的也就是各种小功能，不提了，技术选型说下，整体上使用 Vue（包括 router，resource，webpack等等">
+<meta property="og:updated_time" content="2016-02-18T09:31:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="html5 上传本地图片处理各种问题">
+<meta name="twitter:description" content="这是最近给公司写一个项目，项目要求大概是这样子：1.上传手机本地图片，然后裁剪（后加的需求）2.能够旋转图片，用于裁剪（后面加的需求）3.填写各种文字，选择颜色，之后把文字和2个相关的图片，水印到裁剪的图片上，上传服务器生成一个图片地址，返回，分享出去。
+功能就是大概上面这些，其他的也就是各种小功能，不提了，技术选型说下，整体上使用 Vue（包括 router，resource，webpack等等">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> html5 上传本地图片处理各种问题 | LeslieYQ </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">LeslieYQ</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">挣扎在互联网大海中的小鱼</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                html5 上传本地图片处理各种问题
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-12-16T17:30:45+08:00" content="2015-12-16">
+              2015-12-16
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这是最近给公司写一个项目，项目要求大概是这样子：<br>1.上传手机本地图片，然后裁剪（后加的需求）<br>2.能够旋转图片，用于裁剪（后面加的需求）<br>3.填写各种文字，选择颜色，之后把文字和2个相关的图片，水印到裁剪的图片上，上传服务器生成一个图片地址，返回，分享出去。</p>
+<p>功能就是大概上面这些，其他的也就是各种小功能，不提了，技术选型说下，整体上使用 Vue（包括 router，resource，webpack等等）</p>
+<p>那么这几个需求怎么做呢：<br>1、 本地上传，使用 html5 的 File Api 拿到图片的base64编码，赋值给img的src（坑1，2），然后弹出一个图层，进行裁剪，最开始裁剪是在img的上面套一个div来进行坐标计算，计算完了使用canvas来截取图片，然后取值（坑3）。<br>2、这个功能就是使用canvas的旋转图片解决，需要注意的是，旋转的时候要保持横纵比，而且要注意宽高的大小（坑4）。<br>3、使用canvas来叠加水印和图片即可，主要是注意坐标。</p>
+<p>那么说说坑：<br>1、拿到src的base64编码，看似没有问题，实际上有个巨大的问题，很多图片在手机上显示为竖屏，但是拿到的base64编码，直接赋值给img的src后，发现是横屏的。最开始发现这种情况，以为是个别现象，最后不断尝试之后，发现是个非常普遍的情况，特别是IPhone手机，而且还分你选择的图片文件夹，相册和照片流同一张图片，一个横屏，一个竖屏。导致我完全不能理解这是为什么？？？基本一个下午耗在这个问题上了。</p>
+<p>直到晚上回去，问我一个朋友IOS开发的大神，@<a href="http://weibo.com/u/1438670852" target="_blank" rel="external">叶孤城__</a>,他告诉我，因为现在IPhone的摄像头就是横着的，手机里显示竖屏的原因是ios自己做了处理，他们可以根据图片的一个拍摄角度数值来判断横竖问题，但是这个数值在我们web端确拿不到，很是尴尬。那么怎么解决这个问题呢？？ ——- 我使用的方案:旋转图片，可以让用户自己去主动旋转图片，选取角度。 还有另外一种解决方案，在坑2也用到，后面讲。</p>
+<p>2、除了这个横屏之外，android手机有的上传，选择了图片之后，没有任何反应，我开始一度认为原因是不支持html5的File Api，所以没有显示出上传的图片，后面就各种debugger，发现原因是没有触发Input标签的change事件，而且不管怎么样都没有办法触发，为了解决这个问题，查阅了各种官方文档和stackoverflow之后，发现可以给 type=”file”的input添加两个属性来表示手机上传图片。</p>
+<pre><code>&lt;input type=<span class="string">"file"</span> <span class="property">name</span>=<span class="string">"image"</span> <span class="type">class</span>=<span class="string">"file-choose"</span> <span class="property">id</span>=<span class="string">"file"</span> accept=<span class="string">"image/*"</span> v-<span class="function_start"><span class="keyword">on</span></span>:change=<span class="string">"chooseFileChange($event)"</span> capture/&gt;
+</code></pre><p>这样添加了 accept 和 capture之后，有问题的android手机，在选择图片的时候，有好几个文件夹，可以选择了，其中有的可以上传，有的不行，经常仔细的测试发现，sd卡上的图片是拿不到的，也就不会触发change事件，因为没有root权限去拿文件数据。又是一个无解问题，因为你的web在浏览器里面，权限就是低啊，（不得不吐槽下web的权限问题，妈蛋）怎么解决问题呢？？？ 绕过去，也就是说如果你的页面是嵌套在你们公司自己App里面的，就让App帮你，那么我们项目是微信传播的，一定在微信浏览器里面，所以可以调用微信的JSSDK的选择图片接口，他是可以越过这些权限，而且还有一个好处，就是解决坑1的问题，他会处理横屏问题，就是把看着竖屏，实际横屏的上传时都处理为竖屏，但是代价也不小，你要选择图片，拿到一个key，然后继续调用sdk传到微信的服务器，拿到一个serverid，这个id传给自己的服务端，让他们通过这个id，去微信下载图片到自己的服务器，返回给你一个Url。过程很曲折，而且下载次数有限制（可以跟微信申请加载限制）；</p>
+<p>参考： <a href="http://mp.weixin.qq.com/wiki/7/1c97470084b73f8e224fe6d9bab1625b.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3" target="_blank" rel="external">微信 js sdk 选择图片接口</a></p>
+<p>3、我们继续说坑，以上问题，解决了之后，就是裁剪了，开始我使用的方案是这样子的，获取到base64之后，赋值给一个img，然后在这个img上进行框选移动，计算坐标然后裁剪，pc端完全没有任何问题，效率很高，但是放到微信上面测试，发现3个问题（妈蛋，手机端就是坑，一个功能，3个不同的问题），第一个问题，大家都知道现在手机像素高，图片不小，上传过来之后，base64也不小，放到img的src中其实就是内存中了，导致整个微信特别容易崩溃（就是崩溃，他就崩溃了，微信就崩溃了—三遍），第二个问题,使用vue的on来绑定touch事件，响应很慢，移动一点都不平滑，而且也会崩溃，没错，又崩溃了。第三个问题，旋转要使用canvas转化，先去图片数据，转完后，在给图片src赋值，很麻烦。</p>
+<p>解决方案： 统一使用canvas，不要再用img，知道裁剪完成了，把img的base64拿到就行，而且导出的时候，使用jpeg不要是png，降低一些画质，我觉得完全没有影响，也就是图片的裁剪，旋转都是canvas，事件建议直接原生绑定。</p>
+<p>4、旋转的坑，这个的问题是我们必须保存住原始图片的数据，进行canvas先旋转然后drawImage，要不没有旋转出来，canvas自己的imageData，貌似没有办法旋转，我试了矩阵的方式好像都不行（也可能是自己数学不好！！！如果有人知道，就demo）。</p>
+<p>以上就是这次项目，遇到的各种大坑，其他都是小的地方，不过总体来说，完成了任务，并且使用了新的技术Vue.js。Vue的component还是非常好用的，注意父子关系，props的继承就没问题了。</p>
+<p>欢迎大家交流相关技术， 如果对Vue感兴趣，可以加QQ群： 364912432，240319632。</p>
+<p>求打赏，求关注微博。O(∩_∩)O哈哈~</p>
+<p>最后附上活动网址，微信客户端打开才能使用： <a href="http://biran.luojilab.com/#!/8" target="_blank" rel="external">预测2046</a></p>
+<p>欢迎各位参与玩耍。</p>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/html5-mobile-upload-image-canvas-web前端/" rel="tag">#html5 mobile upload image canvas web前端</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/10/Vue-js为什么不支持templateUrl模式/" rel="next" title="Vue.js为什么不支持templateUrl模式">
+                <i class="fa fa-chevron-left"></i> Vue.js为什么不支持templateUrl模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://upload.jianshu.io/users/upload_avatars/198062/875bc5b22967?imageMogr/thumbnail/150x150/quality/100"
+               alt="LeslieYQ yuqiu" />
+          <p class="site-author-name" itemprop="name">LeslieYQ yuqiu</p>
+          <p class="site-description motion-element" itemprop="description">yuqiu's blog 于秋 LeslieYQ</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+          
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/LeslieYQ" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/gxiaogui" target="_blank">
+                  
+                    <i class="fa fa-weibo"></i> Weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2013 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeslieYQ yuqiu</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  
+
+
+  
+
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+
+  
+  
+
+
+</body>
+</html>
